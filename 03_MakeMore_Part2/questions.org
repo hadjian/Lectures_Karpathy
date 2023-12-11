@@ -1,0 +1,4 @@
+#+TITLE: Questions about makemore Part2
+
+* The LUT in the paper has 27000 entries for all the words. Why are we building a vector for each character instead of a word?
+

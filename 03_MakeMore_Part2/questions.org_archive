@@ -1,0 +1,12 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /home/hadjian/src/github.com/hadjian/Lectures_Karpathy/03_MakeMore_Part2/questions.org
+
+
+* The LUT in the paper has 27000 entries for all the words. Why are we building a vector for each character instead of a word?
+:PROPERTIES:
+:ARCHIVE_TIME: 2023-12-09 Sa 23:43
+:ARCHIVE_FILE: ~/src/github.com/hadjian/Lectures_Karpathy/03_MakeMore_Part2/questions.org
+:ARCHIVE_CATEGORY: questions
+:END:
