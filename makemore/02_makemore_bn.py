@@ -25,10 +25,10 @@ class BatchNorm1d:
         self.eps = eps
         self.m = momentum
         self.training = True
-        self.gamma = torch.ones((1, dim))
-        self.beta = torch.zeros((1, dim))
-        self.running_mean = torch.zeros((1, dim))
-        self.running_var = torch.ones((1, dim))
+        self.gamma = torch.ones(dim)
+        self.beta = torch.zeros(dim)
+        self.running_mean = torch.zeros(dim)
+        self.running_var = torch.ones(dim)
 
 
     def __call__(self, x):
@@ -98,16 +98,17 @@ g = torch.Generator().manual_seed(2147483647)
 C = torch.randn((vocab_size, n_embd), generator=g)
 
 layers = [
-    Linear(n_embd * block_size, n_hidden, bias=False), Tanh(),
-    Linear(           n_hidden, n_hidden, bias=False), Tanh(),
-    Linear(           n_hidden, n_hidden, bias=False), Tanh(),
-    Linear(           n_hidden, n_hidden, bias=False), Tanh(),
-    Linear(           n_hidden, n_hidden, bias=False), Tanh(),
-    Linear(           n_hidden, vocab_size, bias=False),
+    Linear(n_embd * block_size, n_hidden, bias=False), BatchNorm1d(n_hidden), Tanh(),
+    Linear(           n_hidden, n_hidden, bias=False), BatchNorm1d(n_hidden), Tanh(),
+    Linear(           n_hidden, n_hidden, bias=False), BatchNorm1d(n_hidden), Tanh(),
+    Linear(           n_hidden, n_hidden, bias=False), BatchNorm1d(n_hidden), Tanh(),
+    Linear(           n_hidden, n_hidden, bias=False), BatchNorm1d(n_hidden), Tanh(), 
+    Linear(           n_hidden, vocab_size, bias=False), BatchNorm1d(vocab_size),
 ]
 
 with torch.no_grad():
-    layers[-1].weight *= 0.1
+#    layers[-1].weight *= 0.1  with bn we don't change the weight, but the gamma
+    layers[-1].gamma *= 0.1
     for layer in layers[:-1]:
         if isinstance(layer, Linear):
             layer.weight *= 5/3
@@ -155,7 +156,7 @@ def mlp():
         lossi.append(loss.log10().item())
         with torch.no_grad():
             ud.append([(lr * p.grad.std() / p.data.std()).log10().item() for p in parameters])
-        
+
         if i > 1000:
             break
 
